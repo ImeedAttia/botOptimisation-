@@ -169,6 +169,12 @@ def replace_video_segments(
                                                                 subtitles[replace_index], font_path, font_size,
                                                                 font_color, bg_color, margin)
         combined_segments.append(adjusted_segment_with_subtitles)
+
+    # Fill the remaining segments with the original ones
+    for idx in range(len(original_segments)):
+        if idx not in replacement_videos:
+            combined_segments.append(original_segments[idx])
+
     return combined_segments
 
 
