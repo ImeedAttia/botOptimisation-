@@ -41,40 +41,40 @@ def index():
                     border-radius: 10px;
                     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
                     width: 400px;
-                    text-align: center.
+                    text-align: center;
                 }
                 h1 {
-                    color: #333.
+                    color: #333;
                 }
                 input[type="file"] {
-                    margin-bottom: 10px.
+                    margin-bottom: 10px;
                 }
                 input[type="text"] {
-                    margin-bottom: 10px.
-                    width: 100%.
-                    padding: 8px.
-                    border: 1px solid #ddd.
-                    border-radius: 5px.
+                    margin-bottom: 10px;
+                    width: 100%;
+                    padding: 8px;
+                    border: 1px solid #ddd;
+                    border-radius: 5px;
                 }
                 input[type="submit"] {
-                    background-color: #4CAF50.
-                    color: white.
-                    padding: 10px 20px.
-                    border: none.
-                    border-radius: 5px.
-                    cursor: pointer.
+                    background-color: #4CAF50;
+                    color: white;
+                    padding: 10px 20px;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
                 }
                 input[type="submit"]:hover {
-                    background-color: #45a049.
+                    background-color: #45a049;
                 }
                 #waitMessage {
-                    margin-top: 20px.
-                    color: #555.
+                    margin-top: 20px;
+                    color: #555;
                 }
             </style>
             <script>
                 function displayMessage() {
-                    document.getElementById("waitMessage").innerText = "Please wait for files uploading process. Don't close the page.".
+                    document.getElementById("waitMessage").innerText = "Please wait for files uploading process. Don't close the page.";
                 }
                 function downloadAll() {
                     // Get all file names
@@ -82,20 +82,20 @@ def index():
                         {% for file in files %}
                             "{{ file }}",
                         {% endfor %}
-                    ].
+                    ];
 
                     // Create a temporary anchor element
-                    var link = document.createElement("a").
+                    var link = document.createElement("a");
 
                     // Loop through each file and trigger download
                     files.forEach(function(file) {
                         // Set the href attribute of the anchor element
-                        link.setAttribute("href", "/download/" + file).
+                        link.setAttribute("href", "/download/" + file);
                         // Set the download attribute to force download
-                        link.setAttribute("download", file).
+                        link.setAttribute("download", file);
                         // Simulate click on the anchor element
-                        link.click().
-                    }).
+                        link.click();
+                    });
                 }
             </script>
         </head>
@@ -243,30 +243,30 @@ def process():
         <title>Processing</title>
         <style>
             body {
-                font-family: Arial, sans-serif.
-                background-color: #f2f2f2.
-                margin: 0.
-                padding: 0.
-                display: flex.
-                justify-content: center.
-                align-items: center.
-                height: 100vh.
+                font-family: Arial, sans-serif;
+                background-color: #f2f2f2;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
             }
             .container {
-                background-color: white.
-                padding: 20px.
-                border-radius: 10px.
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1).
-                width: 400px.
-                text-align: center.
+                background-color: white;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                width: 400px;
+                text-align: center;
             }
             h1 {
-                color: #333.
+                color: #333;
             }
             a {
-                text-decoration: none.
-                color: #4CAF50.
-                font-weight: bold.
+                text-decoration: none;
+                color: #4CAF50;
+                font-weight: bold;
             }
         </style>
     </head>
@@ -291,49 +291,49 @@ def download():
         <title>Download Files</title>
         <style>
             body {
-                font-family: Arial, sans-serif.
-                background-color: #f2f2f2.
-                margin: 0.
-                padding: 0.
-                display: flex.
-                justify-content: center.
-                align-items: center.
-                height: 100vh.
+                font-family: Arial, sans-serif;
+                background-color: #f2f2f2;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
             }
             .container {
-                background-color: white.
-                padding: 20px.
-                border-radius: 10px.
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1).
-                width: 400px.
-                text-align: center.
+                background-color: white;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                width: 400px;
+                text-align: center;
             }
             h1, h3 {
-                color: #333.
+                color: #333;
             }
             ul {
-                list-style-type: none.
-                padding: 0.
+                list-style-type: none;
+                padding: 0;
             }
             li {
-                margin: 5px 0.
+                margin: 5px 0;
             }
             a {
-                text-decoration: none.
-                color: #4CAF50.
-                font-weight: bold.
+                text-decoration: none;
+                color: #4CAF50;
+                font-weight: bold;
             }
             .download-all-btn {
-                background-color: #4CAF50.
-                color: white.
-                padding: 10px 20px.
-                border: none.
-                border-radius: 5px.
-                cursor: pointer.
-                margin-top: 20px.
+                background-color: #4CAF50;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                margin-top: 20px;
             }
             .download-all-btn:hover {
-                background-color: #45a049.
+                background-color: #45a049;
             }
         </style>
     </head>
@@ -357,20 +357,20 @@ def download():
                     {% for file in files %}
                         "{{ file }}",
                     {% endfor %}
-                ].
+                ];
 
                 // Create a temporary anchor element
-                var link = document.createElement("a").
+                var link = document.createElement("a");
 
                 // Loop through each file and trigger download
                 files.forEach(function(file) {
                     // Set the href attribute of the anchor element
-                    link.setAttribute("href", "/download/" + file).
+                    link.setAttribute("href", "/download/" + file);
                     // Set the download attribute to force download
-                    link.setAttribute("download", file).
+                    link.setAttribute("download", file);
                     // Simulate click on the anchor element
-                    link.click().
-                }).
+                    link.click();
+                });
             }
         </script>
     </body>

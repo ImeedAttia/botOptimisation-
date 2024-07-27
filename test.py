@@ -91,7 +91,7 @@ def convert_color(color):
         if color.startswith('#'):
             # Convert hex string to RGB tuple
             return tuple(int(color.lstrip('#')[i:i + 2], 16) for i in (0, 2, 4))
-        elif color.startswith('(') and color.endswith(')'):
+        elif color.startswith('(') and color.endsWith(')'):
             # Convert string in the form '(r, g, b)' to RGB tuple
             return tuple(map(int, color.strip('()').split(',')))
         else:
