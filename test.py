@@ -72,7 +72,8 @@ def subriptime_to_seconds(srt_time: pysrt.SubRipTime) -> float:
     return srt_time.hours * 3600 + srt_time.minutes * 60 + srt_time.seconds + srt_time.milliseconds / 1000.0
 
 
-def get_segments_using_srt(video: VideoFileClip, subtitles: pysrt.SubRipFile) -> (List[VideoFileClip], List[pysrt.SubRipItem]):
+def get_segments_using_srt(video: VideoFileClip, subtitles: pysrt.SubRipFile) -> (
+        List[VideoFileClip], List[pysrt.SubRipItem]):
     subtitle_segments = []
     video_segments = []
     for subtitle in subtitles:
@@ -89,8 +90,8 @@ def convert_color(color):
     if isinstance(color, str):
         if color.startswith('#'):
             # Convert hex string to RGB tuple
-            return tuple(int(color.lstrip('#')[i:i+2], 16) for i in (0, 2, 4))
-        elif color.startswith('(') and color.endswith(')'):
+            return tuple(int(color.lstrip('#')[i:i + 2], 16) for i in (0, 2, 4))
+        elif color.startswith('(') and color.endsWith(')'):
             # Convert string in the form '(r, g, b)' to RGB tuple
             return tuple(map(int, color.strip('()').split(',')))
         else:
@@ -100,15 +101,16 @@ def convert_color(color):
     else:
         raise ValueError("Color format not recognized. Provide a hex string, named color, or RGB tuple as a string.")
 
-def add_subtitles_to_clip(clip: VideoFileClip, 
-                          subtitle: pysrt.SubRipItem, 
+
+def add_subtitles_to_clip(clip: VideoFileClip,
+                          subtitle: pysrt.SubRipItem,
                           font_path: str,
-                          font_size: int = 33, 
+                          font_size: int = 33,
                           font_color: str = "white",
                           bg_color: str = "black",
                           margin: int = 20) -> VideoFileClip:
     logging.info(f"Adding subtitle: {subtitle.text}")
-    
+
     subtitle_clip = TextClip(
         subtitle.text,
         fontsize=font_size,
@@ -120,17 +122,18 @@ def add_subtitles_to_clip(clip: VideoFileClip,
         align='center',
         size=(clip.w - 2 * margin, None)
     ).set_duration(subriptime_to_seconds(subtitle.end) - subriptime_to_seconds(subtitle.start))
-    
+
     text_width, text_height = subtitle_clip.size
     box_width = clip.w - 2 * margin
     box_height = text_height + margin
-    
+
     # Convert bg_color to RGB tuple if necessary
     bg_color = convert_color(bg_color)
-    
+
     # Create the background box clip
-    box_clip = ColorClip(size=(box_width, box_height), color=bg_color).set_opacity(1).set_duration(subtitle_clip.duration)
-    
+    box_clip = ColorClip(size=(box_width, box_height), color=bg_color).set_opacity(1).set_duration(
+        subtitle_clip.duration)
+
     box_position = ('center', clip.h - box_height - margin)
     subtitle_position = ('center', clip.h - box_height - margin + (box_height - text_height) / 2)
     box_clip = box_clip.set_position(box_position)
@@ -139,15 +142,15 @@ def add_subtitles_to_clip(clip: VideoFileClip,
 
 
 def replace_video_segments(
-    original_segments: List[VideoFileClip],
-    replacement_videos: Dict[int, VideoFileClip],
-    subtitles: pysrt.SubRipFile,
-    original_video: VideoFileClip,
-    font_path: str,
-    font_size: int,
-    font_color: str,
-    bg_color: str,
-    margin: int 
+        original_segments: List[VideoFileClip],
+        replacement_videos: Dict[int, VideoFileClip],
+        subtitles: pysrt.SubRipFile,
+        original_video: VideoFileClip,
+        font_path: str,
+        font_size: int,
+        font_color: str,
+        bg_color: str,
+        margin: int
 ) -> List[VideoFileClip]:
     combined_segments = original_segments.copy()
     for replace_index, replacement_video in replacement_videos.items():
@@ -156,19 +159,16 @@ def replace_video_segments(
             start = subriptime_to_seconds(subtitles[replace_index].start)
             end = subriptime_to_seconds(subtitles[replace_index].end)
 
-            # here, in the thrid clip, the video length is only 3 seconds in lenght, but the subtitle asks to crop 4~6
-            # the problem would only be worse since the subtitle timestamp is getting longer and longer, but clips are always short
-            # a potential fix here is to always crop the video to the subtitle length, from 0 to subtitle length
-            
             subtitle_length = end - start
-            if subtitle_length >= replacement_video.duration: # if the subtitle length is longer than the replacement video
+            if subtitle_length >= replacement_video.duration:
                 subtitle_length = replacement_video.duration
-            
-            replacement_segment = replacement_video.subclip(0, subtitle_length) # always crop to subtitle length, from 0
+
+            replacement_segment = replacement_video.subclip(0, subtitle_length)
             replacement_segment = adjust_segment_duration(replacement_segment, target_duration)
             adjusted_segment = adjust_segment_properties(replacement_segment, original_video)
-            adjusted_segment_with_subtitles = add_subtitles_to_clip(adjusted_segment, 
-                                                                    subtitles[replace_index], font_path, font_size, font_color, bg_color, margin)
+            adjusted_segment_with_subtitles = add_subtitles_to_clip(adjusted_segment,
+                                                                    subtitles[replace_index], font_path, font_size,
+                                                                    font_color, bg_color, margin)
             combined_segments[replace_index] = adjusted_segment_with_subtitles
     return combined_segments
 
@@ -183,7 +183,8 @@ def generate_srt_from_txt_and_audio(txt_file: Path, audio_file: Path, output_fol
     logging.error(f"Command error: {result.stderr.decode('utf-8')}")
 
     if not output_file_path.exists():
-        raise FileNotFoundError(f"The output file {output_file_path} was not created. Check the command output above for errors.")
+        raise FileNotFoundError(
+            f"The output file {output_file_path} was not created. Check the command output above for errors.")
 
     with open(output_file_path, 'r') as f:
         sync_map = json.load(f)
@@ -209,7 +210,8 @@ def generate_srt_from_txt_and_audio(txt_file: Path, audio_file: Path, output_fol
     return srt_file
 
 
-def main(video_clips_path, my_video, mp3_file_of_same_video, txt_file_of_same_video, output_folder, font_path, font_size, font_color, bg_color,margin):
+def main(video_clips_path, my_video, mp3_file_of_same_video, txt_file_of_same_video, output_folder, font_path,
+         font_size, font_color, bg_color, margin):
     input_video_file = Path(my_video)
     replacement_base_folder = Path(video_clips_path)
 
@@ -217,7 +219,8 @@ def main(video_clips_path, my_video, mp3_file_of_same_video, txt_file_of_same_vi
     output_folder.mkdir(parents=True, exist_ok=True)
 
     # Generate SRT file from TXT and MP3
-    srt_file = generate_srt_from_txt_and_audio(Path(txt_file_of_same_video), Path(mp3_file_of_same_video), output_folder)
+    srt_file = generate_srt_from_txt_and_audio(Path(txt_file_of_same_video), Path(mp3_file_of_same_video),
+                                               output_folder)
     logging.info("Generated SRT file from TXT and MP3")
 
     video = load_video_from_file(input_video_file)
@@ -258,19 +261,19 @@ def main(video_clips_path, my_video, mp3_file_of_same_video, txt_file_of_same_vi
             logging.info(f"Replacement video {replacement_video_file} cropped to desired aspect ratio")
             if len(replacement_videos_per_combination) < len(replacement_video_files):
                 replacement_videos_per_combination.append({})
-            replacement_videos_per_combination[replacement_video_files.index(replacement_video_file)][replace_index] = cropped_replacement_video
+            replacement_videos_per_combination[replacement_video_files.index(replacement_video_file)][
+                replace_index] = cropped_replacement_video
 
     for i, replacement_videos in enumerate(replacement_videos_per_combination):
         final_video_segments = replace_video_segments(
-            output_video_segments, replacement_videos, subtitles, video , font_path, font_size,font_color, bg_color,margin
+            output_video_segments, replacement_videos, subtitles, video, font_path, font_size, font_color, bg_color,
+            margin
         )
         concatenated_video = concatenate_videoclips(final_video_segments)
         original_audio = video.audio.subclip(0, concatenated_video.duration)
         final_video_with_audio = concatenated_video.set_audio(original_audio)
-        #tmp_path = Path('tmp')
-        output_file = output_folder / f"output_variation_{i+1}.mp4"
+        output_file = output_folder / f"output_variation_{i + 1}.mp4"
         final_video_with_audio.write_videofile(output_file.as_posix(), codec="libx264", audio_codec="aac")
-        #shutil.move(tmp_path, output_file)
         logging.info(f"Generated output video: {output_file}")
 
 
@@ -289,7 +292,7 @@ if __name__ == "__main__":
     parser.add_argument("--font_color", "-fc", default="white", help="Font color for subtitles")
     parser.add_argument("--bg_color", "-bc", default="black", help="Background color for subtitles")
     parser.add_argument("--margin", "-m", default=20, type=int, help="Margin for subtitles")
-    
-    args = parser.parse_args()
-    main(args.input_clips, args.input_video, args.input_mp3, args.input_txt, Path(args.output_dir),args.font_file, args.font_size, args.font_color, args.bg_color, args.margin)
 
+    args = parser.parse_args()
+    main(args.input_clips, args.input_video, args.input_mp3, args.input_txt, Path(args.output_dir), args.font_file,
+         args.font_size, args.font_color, args.bg_color, args.margin)

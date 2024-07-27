@@ -7,12 +7,15 @@ import shutil
 
 app = Flask(__name__)
 
+
 def generate_unique_id():
     return str(uuid.uuid4())
+
 
 def generate_datetime_alias():
     current_time = datetime.datetime.now()
     return current_time.strftime("%Y-%m-%d_%H-%M-%S")
+
 
 @app.route('/')
 def index():
@@ -115,7 +118,8 @@ def index():
             </div>
         </body>
         </html>
-        ''')
+    ''')
+
 
 def remove_all_files_in_directory(directory):
     if os.path.exists(directory):
@@ -131,19 +135,20 @@ def remove_all_files_in_directory(directory):
     else:
         print(f"Directory {directory} does not exist")
 
+
 @app.route('/process', methods=['POST'])
 def process():
     static_out_file_server = os.path.join('static', 'output_root')
     tmp = os.path.join(os.getcwd(), 'tmp')
     final_out_path = os.path.join('static', 'output_root', 'final')
     outpath = os.path.join(static_out_file_server, 'output')
-    
+
     try:
         # Cleanup old files
         remove_all_files_in_directory(os.path.join(outpath, 'videos'))
         remove_all_files_in_directory(os.path.join(outpath, 'audios'))
         remove_all_files_in_directory(final_out_path)
-        
+
         if os.path.exists(tmp):
             tmp_dirs = os.listdir(tmp)
             for dir in tmp_dirs:
@@ -151,7 +156,7 @@ def process():
             remove_all_files_in_directory(tmp)
     except Exception as e:
         return f"An error occurred during cleanup: {e}", 500
-    
+
     try:
         # Create necessary directories
         os.makedirs(outpath, exist_ok=True)
@@ -161,9 +166,9 @@ def process():
         os.makedirs(tmp, exist_ok=True)  # Ensure the tmp directory exists
     except Exception as e:
         return f"An error occurred during directory creation: {e}", 500
-    
+
     unique_special_id = os.path.join(tmp, generate_unique_id())
-    
+
     video_dir = os.path.join(unique_special_id, "video")
     clips_dir = os.path.join(unique_special_id, "clips")
     mp3_dir = os.path.join(unique_special_id, "mp3")
@@ -199,21 +204,21 @@ def process():
         font_file.save(font_file_path)
     except Exception as e:
         return f"An error occurred while saving files: {e}", 500
-    
+
     try:
         shutil.unpack_archive(clips_folder_path, clips_dir)
     except Exception as e:
         return f"An error occurred while unpacking clips folder: {e}", 500
-    
+
     # New parameters
     font_size = request.form.get('font_size')
     box_color = request.form.get('font_color')
     bg_color = request.form.get('bg_color')
     margin = request.form.get('margin', 20)  # Default margin if not provided
-    
+
     if not font_size or not box_color or not bg_color:
         return "Missing required form data", 400
-    
+
     def run_script():
         cmd = (f'python3.10 test.py '
                f'--input_video "{video_file_path}" '
@@ -228,7 +233,7 @@ def process():
                f'--margin "{margin}"')
         print(cmd)
         os.system(cmd)
-    
+
     Thread(target=run_script).start()
 
     return render_template_string('''
@@ -275,8 +280,7 @@ def process():
     </html>
     ''')
 
-    
-    
+
 @app.route('/download/')
 def download():
     files = os.listdir('static/output_root/final')
@@ -373,10 +377,11 @@ def download():
     </html>
     ''', files=files)
 
+
 @app.route('/download/<filename>')
 def download_file(filename):
     return send_from_directory('static/output_root/final', filename, as_attachment=True)
 
+
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0')
-
