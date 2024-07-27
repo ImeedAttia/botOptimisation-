@@ -31,7 +31,7 @@ def load_video_from_file(file: Path) -> VideoFileClip:
 
 def crop_to_aspect_ratio(video: VideoFileClip, desired_aspect_ratio: float) -> VideoFileClip:
     video_aspect_ratio = video.w / video.h
-    if video_aspect_ratio > desired_aspect_ratio:
+    if (video_aspect_ratio > desired_aspect_ratio):
         new_width = int(desired_aspect_ratio * video.h)
         new_height = video.h
         x1 = (video.w - new_width) // 2
@@ -91,7 +91,7 @@ def convert_color(color):
         if color.startswith('#'):
             # Convert hex string to RGB tuple
             return tuple(int(color.lstrip('#')[i:i + 2], 16) for i in (0, 2, 4))
-        elif color.startswith('(') and color.endsWith(')'):
+        elif color.startswith('(') and color.endswith(')'):
             # Convert string in the form '(r, g, b)' to RGB tuple
             return tuple(map(int, color.strip('()').split(',')))
         else:
@@ -152,24 +152,23 @@ def replace_video_segments(
         bg_color: str,
         margin: int
 ) -> List[VideoFileClip]:
-    combined_segments = original_segments.copy()
+    combined_segments = []
     for replace_index, replacement_video in replacement_videos.items():
-        if 0 <= replace_index < len(combined_segments):
-            target_duration = combined_segments[replace_index].duration
-            start = subriptime_to_seconds(subtitles[replace_index].start)
-            end = subriptime_to_seconds(subtitles[replace_index].end)
+        target_duration = original_segments[replace_index].duration
+        start = subriptime_to_seconds(subtitles[replace_index].start)
+        end = subriptime_to_seconds(subtitles[replace_index].end)
 
-            subtitle_length = end - start
-            if subtitle_length >= replacement_video.duration:
-                subtitle_length = replacement_video.duration
+        subtitle_length = end - start
+        if subtitle_length >= replacement_video.duration:
+            subtitle_length = replacement_video.duration
 
-            replacement_segment = replacement_video.subclip(0, subtitle_length)
-            replacement_segment = adjust_segment_duration(replacement_segment, target_duration)
-            adjusted_segment = adjust_segment_properties(replacement_segment, original_video)
-            adjusted_segment_with_subtitles = add_subtitles_to_clip(adjusted_segment,
-                                                                    subtitles[replace_index], font_path, font_size,
-                                                                    font_color, bg_color, margin)
-            combined_segments[replace_index] = adjusted_segment_with_subtitles
+        replacement_segment = replacement_video.subclip(0, subtitle_length)
+        replacement_segment = adjust_segment_duration(replacement_segment, target_duration)
+        adjusted_segment = adjust_segment_properties(replacement_segment, original_video)
+        adjusted_segment_with_subtitles = add_subtitles_to_clip(adjusted_segment,
+                                                                subtitles[replace_index], font_path, font_size,
+                                                                font_color, bg_color, margin)
+        combined_segments.append(adjusted_segment_with_subtitles)
     return combined_segments
 
 
